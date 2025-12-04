@@ -14,16 +14,16 @@ import configuration from './config/configuration';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: () => ({
         type: 'postgres',
-        host: configService.get('database.host'),
-        port: configService.get('database.port'),
-        username: configService.get('database.username'),
-        password: configService.get('database.password'),
-        database: configService.get('database.database'),
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT, 10) || 5432,
+        username: process.env.DB_USERNAME || 'postgres',
+        password: process.env.DB_PASSWORD || 'postgres',
+        database: process.env.DB_NAME || 'iiaom',
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false,
-        ssl: configService.get('database.ssl') ? { rejectUnauthorized: false } : false,
+        ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
       }),
       inject: [ConfigService],
     }),
