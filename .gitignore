@@ -1,1 +1,3 @@
 node_modules
+# Exclure le fichier de variables d'environnement (contient des secrets)
+/apps/api/.env
