@@ -1,40 +1,43 @@
-echo {
-echo   "name": "iiaom-windfurf",
-echo   "version": "1.0.0",
-echo   "private": true,
-echo   "workspaces": ["apps/*", "packages/*"],
-echo   "scripts": {
-echo     "build": "turbo run build",
-echo     "dev": "turbo run dev",
-echo     "start": "node apps/api/dist/main",
-echo     "start:dev": "turbo run start:dev",
-echo     "start:prod": "node apps/api/dist/main",
-echo     "lint": "turbo run lint",
-echo     "format": "prettier --write \"**/*.{ts,tsx,md}\""
-echo   },
-echo   "engines": {
-echo     "node": ">=20.10.0",
-echo     "pnpm": ">=8.10.0"
-echo   },
-echo   "packageManager": "pnpm@8.10.0",
-echo   "dependencies": {
-echo     "@nestjs/common": "^11.1.9",
-echo     "@nestjs/core": "^11.1.9",
-echo     "pg": "^8.16.3",
-echo     "reflect-metadata": "^0.2.0",
-echo     "rxjs": "^7.8.1"
-echo   },
-echo   "devDependencies": {
-echo     "@nestjs/cli": "^11.0.14",
-echo     "@nestjs/schematics": "^11.0.9",
-echo     "@types/express": "^5.0.6",
-echo     "@types/jest": "^30.0.0",
-echo     "@types/node": "^18.19.130",
-echo     "prettier": "^2.7.1",
-echo     "ts-node": "^10.9.2",
-echo     "tsconfig-paths": "^4.2.0",
-echo     "turbo": "latest",
-echo     "typeorm": "0.3.20",
-echo     "typescript": "^4.9.5"
-echo   }
-echo } > package.json
+{
+  "name": "iiaom-windfurf",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "start": "node apps/api/dist/main",
+    "start:dev": "turbo run start:dev",
+    "start:prod": "node apps/api/dist/main",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "engines": {
+    "node": ">=20.10.0",
+    "pnpm": ">=8.10.0"
+  },
+  "packageManager": "pnpm@8.10.0",
+  "dependencies": {
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9",
+    "pg": "^8.16.3",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.14",
+    "@nestjs/schematics": "^11.0.9",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^18.19.130",
+    "prettier": "^2.7.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "turbo": "latest",
+    "typeorm": "0.3.20",
+    "typescript": "^4.9.5"
+  }
+}
