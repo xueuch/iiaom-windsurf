@@ -3,24 +3,28 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
+// Import de tous nos écrans
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import ProfileScreen from './screens/ProfileScreen'; // <--- Le nouveau !
+
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// --- 1. La barre d'onglets (Menu du bas) ---
+// --- 1. La barre d'onglets (Une fois connecté) ---
 function AppTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: 'gray',
+        headerShown: false,             // Pas de titre en haut (on a le nôtre)
+        tabBarActiveTintColor: '#007AFF', // Couleur quand c'est sélectionné (Bleu)
+        tabBarInactiveTintColor: 'gray',  // Couleur quand c'est pas sélectionné (Gris)
+        // Logique pour choisir la bonne icône
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'home';
+          let iconName: keyof typeof Ionicons.glyphMap = 'home'; // Par défaut
 
           if (route.name === 'Accueil') {
             iconName = focused ? 'home' : 'home-outline';
@@ -32,24 +36,26 @@ function AppTabs() {
         },
       })}
     >
+      {/* Onglet 1 : L'accueil avec les stats */}
       <Tab.Screen name="Accueil" component={HomeScreen} />
-      {/* On utilise aussi HomeScreen pour le profil pour l'instant */}
-      <Tab.Screen name="Profil" component={HomeScreen} />
+      
+      {/* Onglet 2 : Le vrai profil avec la déconnexion */}
+      <Tab.Screen name="Profil" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
 
 // --- 2. Le navigateur principal (Sécurité) ---
 function RootNavigator() {
-  const { user } = useAuth();
+  const { user } = useAuth(); // On vérifie si on est connecté
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
-        // Si connecté : On affiche la barre d'onglets
+        // CAS 1 : Connecté -> On affiche les Onglets (Main)
         <Stack.Screen name="Main" component={AppTabs} />
       ) : (
-        // Si PAS connecté : On affiche Login ou Inscription
+        // CAS 2 : Pas connecté -> On affiche Login ou Inscription
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
@@ -59,7 +65,7 @@ function RootNavigator() {
   );
 }
 
-// --- 3. L'application ---
+// --- 3. L'application (Point d'entrée) ---
 export default function App() {
   return (
     <AuthProvider>
