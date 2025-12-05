@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 
-// ⚠️ Vérifiez que c'est toujours votre bon lien ngrok
+// ⚠️ Vérifiez toujours votre lien ngrok ici !
 const API_URL = 'https://vaguest-pamella-disconsolate.ngrok-free.dev/api';
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('admin@test.com'); 
   const [password, setPassword] = useState('monSuperMotDePasse123');
   const [loading, setLoading] = useState(false);
+  
+  const { signIn } = useAuth();
 
   const handleLogin = async () => {
     setLoading(true);
@@ -25,16 +28,21 @@ export default function LoginScreen({ navigation }: any) {
       try {
         const json = JSON.parse(text);
         if (response.ok) {
-          navigation.replace('Home', { user: json.user });
+          // ✅ CORRECTION : On ne navigue plus manuellement.
+          // On met à jour le contexte, et l'App va basculer toute seule sur l'Accueil.
+          await signIn({
+            ...json.user,
+            token: json.accessToken
+          });
         } else {
           Alert.alert("Erreur", json.message || "Échec connexion");
         }
       } catch (e) {
-        console.error("Erreur parsing:", text);
+        console.error("Erreur:", text);
         Alert.alert("Erreur", "Réponse serveur invalide");
       }
     } catch (error) {
-      Alert.alert("Erreur Réseau", "Vérifiez Ngrok et Docker");
+      Alert.alert("Erreur Réseau", "Vérifiez Ngrok");
     } finally {
       setLoading(false);
     }
@@ -44,7 +52,7 @@ export default function LoginScreen({ navigation }: any) {
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>🎓 IIAOM</Text>
-        <Text style={styles.subtitle}>Espace Numérique</Text>
+        <Text style={styles.subtitle}>Connexion</Text>
         
         <TextInput 
           style={styles.input} 
@@ -62,21 +70,18 @@ export default function LoginScreen({ navigation }: any) {
           secureTextEntry 
         />
 
-        {/* Bouton de Connexion */}
         <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Se connecter</Text>}
         </TouchableOpacity>
 
-        {/* NOUVEAU : Bouton pour aller vers l'inscription */}
         <TouchableOpacity 
-          style={styles.linkButton} 
+          style={{ marginTop: 20, alignItems: 'center' }} 
           onPress={() => navigation.navigate('Register')}
         >
-          <Text style={styles.linkText}>
+          <Text style={{ color: '#007AFF', fontWeight: '600' }}>
             Pas de compte ? Créer un compte
           </Text>
         </TouchableOpacity>
-
       </View>
     </KeyboardAvoidingView>
   );
@@ -89,9 +94,5 @@ const styles = StyleSheet.create({
   subtitle: { fontSize: 16, textAlign: 'center', color: '#666', marginBottom: 30 },
   input: { backgroundColor: '#f8f9fa', padding: 15, borderRadius: 10, marginBottom: 15, borderWidth: 1, borderColor: '#eee' },
   button: { backgroundColor: '#007AFF', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10 },
-  btnText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
-  
-  // Styles pour le nouveau bouton
-  linkButton: { marginTop: 20, alignItems: 'center', padding: 10 },
-  linkText: { color: '#007AFF', fontWeight: '600' }
+  btnText: { color: 'white', fontWeight: 'bold', fontSize: 16 }
 });

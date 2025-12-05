@@ -1,25 +1,55 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
-import RegisterScreen from './screens/RegisterScreen'; // On n'oublie pas d'importer le nouvel écran
+import RegisterScreen from './screens/RegisterScreen';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
-// Ce composant gère la logique de navigation (Cerveau de la navigation)
+// --- 1. La barre d'onglets (Menu du bas) ---
+function AppTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: 'gray',
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap = 'home';
+
+          if (route.name === 'Accueil') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Profil') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Accueil" component={HomeScreen} />
+      {/* On utilise aussi HomeScreen pour le profil pour l'instant */}
+      <Tab.Screen name="Profil" component={HomeScreen} />
+    </Tab.Navigator>
+  );
+}
+
+// --- 2. Le navigateur principal (Sécurité) ---
 function RootNavigator() {
-  const { user } = useAuth(); // On demande au contexte : "Est-ce qu'on est connecté ?"
+  const { user } = useAuth();
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
-        // SCÉNARIO 1 : L'utilisateur EST connecté
-        // On ne lui montre QUE l'accueil (il ne peut pas revenir au login)
-        <Stack.Screen name="Home" component={HomeScreen} />
+        // Si connecté : On affiche la barre d'onglets
+        <Stack.Screen name="Main" component={AppTabs} />
       ) : (
-        // SCÉNARIO 2 : L'utilisateur N'EST PAS connecté
-        // On lui montre le Login et l'Inscription
+        // Si PAS connecté : On affiche Login ou Inscription
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
@@ -29,14 +59,11 @@ function RootNavigator() {
   );
 }
 
-// Le composant principal qui assemble tout
+// --- 3. L'application ---
 export default function App() {
   return (
-    // 1. On active le système de mémoire (Auth)
     <AuthProvider>
-      {/* 2. On active le système de navigation */}
       <NavigationContainer>
-        {/* 3. On affiche nos écrans */}
         <RootNavigator />
       </NavigationContainer>
     </AuthProvider>
