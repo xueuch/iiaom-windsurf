@@ -1,4 +1,18 @@
+# Dépendances (lourdes, on ne les veut pas)
 node_modules/
+
+# Builds (générés, on ne les veut pas)
 dist/
+build/
+
+# Environnement & Secrets (TROP DANGEREUX, on ignore absolument)
 .env
+.env.local
+*.env
+
+# Logs et Système
 *.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
